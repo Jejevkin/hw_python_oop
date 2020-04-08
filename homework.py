@@ -29,31 +29,29 @@ class Calculator:
 class CaloriesCalculator(Calculator):
 
     def get_calories_remained(self):
-        if self.limit > super().get_today_stats():
-            response = "Сегодня можно съесть что-нибудь ещё, но с общей калорийностью не более "
-            response += str(self.limit - super().get_today_stats()) + " кКал"
-            return response
+        remained = self.limit - self.get_today_stats()
+        if remained > 0:
+            return f"Сегодня можно съесть что-нибудь ещё, но с общей калорийностью не более {remained} кКал"
         else:
             return "Хватит есть!"
 
 
 class CashCalculator(Calculator):
-    USD_RATE = 60.00
-    EURO_RATE = 70.00
+    USD_RATE = 67.00
+    EURO_RATE = 78.00
 
     def get_today_cash_remained(self, currency):
         currencies = {'rub': [1, 'руб'],
                       'usd': [self.USD_RATE, 'USD'],
                       'eur': [self.EURO_RATE, 'Euro'],
                       }
-        balance = round((self.limit - super().get_today_stats()) / currencies[currency][0], 2)
-        debt = round((super().get_today_stats() - self.limit) / currencies[currency][0], 2)
-        if self.limit > super().get_today_stats():
-            response = f"На сегодня осталось {balance} {currencies[currency][1]}"
-            return response
-        elif self.limit < super().get_today_stats():
-            response = f"Денег нет, держись: твой долг - {debt} {currencies[currency][1]}"
-            return response
+        balance = self.limit - self.get_today_stats()
+        balance = round(balance / currencies[currency][0], 2)
+        currency_name = currencies[currency][1]
+        if balance > 0:
+            return f"На сегодня осталось {balance} {currency_name}"
+        elif balance < 0:
+            return f"Денег нет, держись: твой долг - {abs(balance)} {currency_name}"
         else:
             return "Денег нет, держись"
 
